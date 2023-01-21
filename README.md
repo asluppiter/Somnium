@@ -3,7 +3,7 @@ Script to test prevention and detection of network threats.
 
 Usage:
 ```
-pip3 -r requirements.py
+pip3 install -r requirements.py
 python3 main.py
 ```
 
