@@ -97,7 +97,7 @@ while(loopEnd == False):
             response = requests.get(url)
             if response.status_code == 200:
                 current_time = time.strftime("%X")
-                resultUP = "Timestamp:" + str(current_time) + " URL:" + str(url) +" test SUCCESSFULL\n"
+                resultUP = "Timestamp:" + str(current_time) + " URL:" + str(url) +" test SUCCESSFUL\n"
                 myFile.write(resultUP)
             else:
                 current_time = time.strftime("%X")
