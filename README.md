@@ -1,4 +1,4 @@
-# netsec-test-script
+# Somnium
 Script to test prevention and detection of network threats.
 
 Usage:
