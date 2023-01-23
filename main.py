@@ -1,4 +1,6 @@
 #pip libs
+import json
+
 from tqdm import tqdm
 import requests
 #standar libs
@@ -24,12 +26,11 @@ def check_url(url):
         return True
     else:
         return False
-
 print("###################")
 print("Security Testing Script")
 loopEnd = False
 while(loopEnd == False):
-  choice = input("#1 Test connection with known bad IPs.\n#2 Test connection with known bad URLs.\n#3 Test TOR Exits Nodes.\n#0 Exit.\nChoice:")
+  choice = input("#1 Test connection with known bad IPs.\n#2 Test connection with known bad URLs.\n#3 Test TOR Exits Nodes.\n#4 Test access to live Malware distribution Urls\n#0 Exit.\nChoice:")
   if int(choice) == 1:#
     urls = [
         'http://opendbl.net/lists/etknown.list',
@@ -146,11 +147,37 @@ while(loopEnd == False):
     for file_name in saved_files:
         os.remove(file_name)
     clear_screen()
-  elif int(choice) == 0:
-      print("bye :D")
-      exit()
+  elif int(choice) == 4:
+      urlsIndex= []
+      randomUrlsIndex = []
+      baseURL = "https://urlhaus-api.abuse.ch/v1/urls/recent/limit/200/"
+      response = requests.get(baseURL)
+      json_response = response.json()
+      counter = 0
+      for x in tqdm(json_response["urls"],desc="Getting samples list"):
+          status = json_response["urls"][counter]["url_status"]
+          if status == "online":
+              liveURL = json_response["urls"][counter]["url"]
+              urlsIndex.append(liveURL)
+          counter=counter+1
+      for i in range(20):
+          randomSample = random.choice(urlsIndex)
+          randomUrlsIndex.append(randomSample)
+      myFile2 = open("Malware_Results.txt", mode="a+")
+      for x in tqdm(randomUrlsIndex,desc="Testing samples, Results saved at Malware_Results.txt"):
+          downloader = requests.get(x)
+          if downloader.status_code == 200:
+              current_time = time.strftime("%X")
+              result = "Timestamp:" + str(current_time) + " URL:" + str(x) + " test SUCCESFULL\n"
+              myFile2.write(result)
+          else:
+              current_time = time.strftime("%X")
+              result = "Timestamp:" + str(current_time) + " URL:" + str(x) + " test FAILED\n"
+              myFile2.write(result)
+      clear_screen()
   else:
       print("-----")
-      os.system('cls')
+      clear_screen()
+      exit()
 
 
