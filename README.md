@@ -20,3 +20,8 @@ The script will dowload samples from OpenDBL ([EmergingThearts](http://opendbl.n
 Results are saved to different text files on the running folder with a timestamp so you can validate detection at your FW, Proxy, SIEM, etc.
 
 This script is Work-In-Progress, bugs and exceptions may appear, and new features may be added on the future.
+To Do:
+.-Test download of samples from MalwareBazaar
+.-Test ssh scanning
+.-Test crypto mining domains
+.-Test IDS with dummy requests
