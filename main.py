@@ -1,10 +1,9 @@
 #pip libs
-import json
-
 from tqdm import tqdm
 import requests
 #standar libs
 import random
+import json
 import socket
 import time
 import os
@@ -30,7 +29,7 @@ print("###################")
 print("Security Testing Script")
 loopEnd = False
 while(loopEnd == False):
-  choice = input("#1 Test connection with known bad IPs.\n#2 Test connection with known bad URLs.\n#3 Test TOR Exits Nodes.\n#4 Test access to live Malware distribution Urls\n#0 Exit.\nChoice:")
+  choice = input("#1 Test connection with known bad IPs.\n#2 Test connection with known Phishing URLs.\n#3 Test connection to TOR Exits Nodes.\n#4 Test connection to live Malware distribution Urls\n#5 Test connection to known Cryptomining domains\n#0 Exit.\nChoice:")
   if int(choice) == 1:#
     urls = [
         'http://opendbl.net/lists/etknown.list',
@@ -58,18 +57,24 @@ while(loopEnd == False):
     myFile = open("IP_Results.txt", mode="a+")
     for ip in tqdm(sampleIP, desc="Testing 15 samples from Cisco Talos, EmergingThreats and Mirai, results saved to IP_Results.txt"):
         for port in ports:
-            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            sock.settimeout(5)
-            result = sock.connect_ex((ip, port))
-            if result == 0:
+            try:
+                sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                sock.settimeout(5)
+                result = sock.connect_ex((ip, port))
+                if result == 0:
+                    current_time = time.strftime("%X")
+                    resultUP = "Timestamp:"+str(current_time)+" IP:"+str(ip)+ " : Port:"+ str(port)+ " test SUCCESSFUL\n"
+                    myFile.write(resultUP)
+                else:
+                    current_time = time.strftime("%X")
+                    resultDOWN = "Timestamp:"+str(current_time)+" IP:"+str(ip)+ " : Port:"+ str(port)+ " test FAILED\n"
+                    myFile.write(resultDOWN)
+                sock.close()
+            except Exception as e:
                 current_time = time.strftime("%X")
-                resultUP = "Timestamp:"+str(current_time)+" IP:"+str(ip)+ " : Port:"+ str(port)+ " test SUCCESSFUL\n"
-                myFile.write(resultUP)
-            else:
-                current_time = time.strftime("%X")
-                resultDOWN = "Timestamp:"+str(current_time)+" IP:"+str(ip)+ " : Port:"+ str(port)+ " test FAILED\n"
+                resultDOWN = "Timestamp:" + str(current_time) + " IP:" + str(ip) + " : Port:" + str(port) + " test FAILED\n"
                 myFile.write(resultDOWN)
-            sock.close()
+                continue
     for file_name in saved_files:
         os.remove(file_name)
     clear_screen()
@@ -95,7 +100,7 @@ while(loopEnd == False):
     myFile = open("URL_Results.txt", mode="a+")
     for url in tqdm(sampleURL, desc="Testing 15 samples from OpenPhish results saved to URL_Results.txt"):
         try:
-            response = requests.get(url)
+            response = requests.get(url,timeout=5)
             if response.status_code == 200:
                 current_time = time.strftime("%X")
                 resultUP = "Timestamp:" + str(current_time) + " URL:" + str(url) +" test SUCCESSFUL\n"
@@ -132,18 +137,24 @@ while(loopEnd == False):
     myFile = open("TOR_Results.txt", mode="a+")
     for ip in tqdm(sampleTOR, desc="Testing 15 TOR Exits Nodes, results saved to TOR_Results.txt"):
         for port in ports:
-            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            sock.settimeout(5)
-            result = sock.connect_ex((ip, port))
-            if result == 0:
+            try:
+                sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                sock.settimeout(5)
+                result = sock.connect_ex((ip, port))
+                if result == 0:
+                    current_time = time.strftime("%X")
+                    resultUP = "Timestamp:"+str(current_time)+" IP:"+str(ip)+ " : Port:"+ str(port)+ " test SUCCESSFUL\n"
+                    myFile.write(resultUP)
+                else:
+                    current_time = time.strftime("%X")
+                    resultDOWN = "Timestamp:"+str(current_time)+" IP:"+str(ip)+ " : Port:"+ str(port)+ " test FAILED\n"
+                    myFile.write(resultDOWN)
+                sock.close()
+            except Exception as e:
                 current_time = time.strftime("%X")
-                resultUP = "Timestamp:"+str(current_time)+" IP:"+str(ip)+ " : Port:"+ str(port)+ " test SUCCESSFUL\n"
-                myFile.write(resultUP)
-            else:
-                current_time = time.strftime("%X")
-                resultDOWN = "Timestamp:"+str(current_time)+" IP:"+str(ip)+ " : Port:"+ str(port)+ " test FAILED\n"
+                resultDOWN = "Timestamp:" + str(current_time) + " IP:" + str(ip) + " : Port:" + str(port) + " test FAILED\n"
                 myFile.write(resultDOWN)
-            sock.close()
+                continue
     for file_name in saved_files:
         os.remove(file_name)
     clear_screen()
@@ -163,17 +174,62 @@ while(loopEnd == False):
       for i in range(20):
           randomSample = random.choice(urlsIndex)
           randomUrlsIndex.append(randomSample)
-      myFile2 = open("Malware_Results.txt", mode="a+")
+      myFile = open("Malware_Results.txt", mode="a+")
       for x in tqdm(randomUrlsIndex,desc="Testing samples, Results saved at Malware_Results.txt"):
-          downloader = requests.get(x)
-          if downloader.status_code == 200:
-              current_time = time.strftime("%X")
-              result = "Timestamp:" + str(current_time) + " URL:" + str(x) + " test SUCCESFULL\n"
-              myFile2.write(result)
-          else:
+          try:
+              downloader = requests.get(x,timeout=5)
+              if downloader.status_code == 200:
+                current_time = time.strftime("%X")
+                result = "Timestamp:" + str(current_time) + " URL:" + str(x) + " test SUCCESFULL\n"
+                myFile.write(result)
+              else:
+                current_time = time.strftime("%X")
+                result = "Timestamp:" + str(current_time) + " URL:" + str(x) + " test FAILED\n"
+                myFile.write(result)
+          except Exception as e:
               current_time = time.strftime("%X")
               result = "Timestamp:" + str(current_time) + " URL:" + str(x) + " test FAILED\n"
-              myFile2.write(result)
+              myFile.write(result)
+              continue
+      clear_screen()
+  elif int(choice) == 5:
+      urls = 'https://gist.githubusercontent.com/asluppiter/88aa3cb285948e4f982dd94218e5baf3/raw/bffe8bb462eb8b3fb6cd647be65d67de059cb789/mining'
+      saved_files = []
+      print("Downloading Samples")
+      response = requests.get(urls)
+      if response.status_code == 200:
+          file_name = urls.split("/")[-1]
+          with open(file_name, "w") as f:
+              f.write(response.text)
+              saved_files.append(file_name)
+      sampleMining = []
+      for file in saved_files:
+          with open(file, 'r') as f:
+              lines = f.readlines()
+              for i in range(15):
+                  randomIP = random.choice(lines)
+                  sampleMining.append(randomIP)
+      sampleMining = [x.strip() for x in sampleMining]
+      myFile = open("Mining_Results.txt", mode="a+")
+      for x in tqdm(sampleMining, desc="Testing samples, Results saved at Mining_Results.txt"):
+          try:
+              downloader = requests.get(x,timeout=5)
+              if downloader.status_code == 200:
+                current_time = time.strftime("%X")
+                result = "Timestamp:" + str(current_time) + " URL:" + str(x) + " test SUCCESFULL\n"
+                myFile.write(result)
+              else:
+                current_time = time.strftime("%X")
+                result = "Timestamp:" + str(current_time) + " URL:" + str(x) + " test FAILED\n"
+                myFile.write(result)
+          except Exception as e:
+              current_time = time.strftime("%X")
+              result = "Timestamp:" + str(current_time) + " URL:" + str(x) + " test FAILED\n"
+              myFile.write(result)
+              continue
+      clear_screen()
+      for file_name in saved_files:
+          os.remove(file_name)
       clear_screen()
   else:
       print("-----")
