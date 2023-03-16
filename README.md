@@ -36,7 +36,11 @@ To Do:
 
 .-~~Test IDS with dummy requests~~ Shifted-> It would be too much of a hassle to do so I added new features in v0.4 to compensate
 
-Thanks:
+Suricata IDS picking up activity:
+![Suricata](https://raw.githubusercontent.com/asluppiter/Somnium/main/IDS%20Log.png)
+
+
+Thanks to:
 
 .-OpenDBL
 
