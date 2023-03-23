@@ -8,8 +8,8 @@ python3 main.py
 ```
 
 ```
-#1 Test connection with known bad IPs.
-#2 Test connection with known phishing URLs.
+#1 Test connection with live known bad IPs.
+#2 Test connection with live known phishing URLs.
 #3 Test TOR Exits Nodes.
 #4 Test access to live Malware distribution Urls
 #5 Test connection to known Cryptomining domains
