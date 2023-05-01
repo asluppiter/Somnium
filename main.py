@@ -17,17 +17,11 @@ def clear_screen():
 
 def check_ip(ip):
     pattern = r"^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
-    if re.match(pattern, ip):
-        return True
-    else:
-        return False
+    return bool(re.match(pattern, ip))
 
 def check_url(url):
     pattern = r'https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)'
-    if re.match(pattern, url):
-        return True
-    else:
-        return False
+    return bool(re.match(pattern, url))
 
 def known_IP():
     urls = [
@@ -47,7 +41,7 @@ def known_IP():
     for file in saved_files:
         with open(file, 'r') as f:
             lines = f.readlines()
-            for i in range(5):
+            for _ in range(5):
                 randomIP  = random.choice(lines)
                 if check_ip(randomIP):
                     sampleIP.append(randomIP)
@@ -62,16 +56,25 @@ def known_IP():
                 result = sock.connect_ex((ip, port))
                 if result == 0:
                     current_time = time.strftime("%X")
-                    resultUP = "Timestamp:"+str(current_time)+" IP:"+str(ip)+ " : Port:"+ str(port)+ " test SUCCESSFUL\n"
+                    resultUP = (
+                        f"Timestamp:{str(current_time)} IP:{str(ip)} : Port:{str(port)}"
+                        + " test SUCCESSFUL\n"
+                    )
                     myFile.write(resultUP)
                 else:
                     current_time = time.strftime("%X")
-                    resultDOWN = "Timestamp:"+str(current_time)+" IP:"+str(ip)+ " : Port:"+ str(port)+ " test FAILED\n"
+                    resultDOWN = (
+                        f"Timestamp:{str(current_time)} IP:{str(ip)} : Port:{str(port)}"
+                        + " test FAILED\n"
+                    )
                     myFile.write(resultDOWN)
                 sock.close()
             except Exception as e:
                 current_time = time.strftime("%X")
-                resultDOWN = "Timestamp:" + str(current_time) + " IP:" + str(ip) + " : Port:" + str(port) + " test FAILED\n"
+                resultDOWN = (
+                    f"Timestamp:{str(current_time)} IP:{str(ip)} : Port:{str(port)}"
+                    + " test FAILED\n"
+                )
                 myFile.write(resultDOWN)
                 continue
     for file_name in saved_files:
@@ -93,7 +96,7 @@ def known_phish():
     for file in saved_files:
         with open(file, 'r') as f:
             lines = f.readlines()
-            for i in range(15):
+            for _ in range(15):
                 randomURL = random.choice(lines)
                 if check_url(randomURL):
                     sampleURL.append(randomURL)
@@ -104,11 +107,14 @@ def known_phish():
             response = requests.get(url, timeout=5)
             if response.status_code == 200:
                 current_time = time.strftime("%X")
-                resultUP = "Timestamp:" + str(current_time) + " URL:" + str(url) + " test SUCCESSFUL\n"
+                resultUP = (
+                    f"Timestamp:{str(current_time)} URL:{str(url)}"
+                    + " test SUCCESSFUL\n"
+                )
                 myFile.write(resultUP)
             else:
                 current_time = time.strftime("%X")
-                resultDOWN = "Timestamp:" + str(current_time) + " URL:" + str(url) + " test FAILED\n"
+                resultDOWN = f"Timestamp:{str(current_time)} URL:{str(url)}" + " test FAILED\n"
                 myFile.write(resultDOWN)
         except Exception as e:
             continue
@@ -131,7 +137,7 @@ def known_TOR():
     for file in saved_files:
         with open(file, 'r') as f:
             lines = f.readlines()
-            for i in range(15):
+            for _ in range(15):
                 randomIP = random.choice(lines)
                 if check_ip(randomIP):
                     sampleTOR.append(randomIP)
@@ -146,19 +152,25 @@ def known_TOR():
                 result = sock.connect_ex((ip, port))
                 if result == 0:
                     current_time = time.strftime("%X")
-                    resultUP = "Timestamp:" + str(current_time) + " IP:" + str(ip) + " : Port:" + str(
-                        port) + " test SUCCESSFUL\n"
+                    resultUP = (
+                        f"Timestamp:{str(current_time)} IP:{str(ip)} : Port:{str(port)}"
+                        + " test SUCCESSFUL\n"
+                    )
                     myFile.write(resultUP)
                 else:
                     current_time = time.strftime("%X")
-                    resultDOWN = "Timestamp:" + str(current_time) + " IP:" + str(ip) + " : Port:" + str(
-                        port) + " test FAILED\n"
+                    resultDOWN = (
+                        f"Timestamp:{str(current_time)} IP:{str(ip)} : Port:{str(port)}"
+                        + " test FAILED\n"
+                    )
                     myFile.write(resultDOWN)
                 sock.close()
             except Exception as e:
                 current_time = time.strftime("%X")
-                resultDOWN = "Timestamp:" + str(current_time) + " IP:" + str(ip) + " : Port:" + str(
-                    port) + " test FAILED\n"
+                resultDOWN = (
+                    f"Timestamp:{str(current_time)} IP:{str(ip)} : Port:{str(port)}"
+                    + " test FAILED\n"
+                )
                 myFile.write(resultDOWN)
                 continue
     for file_name in saved_files:
@@ -174,13 +186,13 @@ def known_dist():
     response = requests.get(baseURL)
     json_response = response.json()
     counter = 0
-    for x in tqdm(json_response["urls"], desc="Getting samples list"):
+    for _ in tqdm(json_response["urls"], desc="Getting samples list"):
         status = json_response["urls"][counter]["url_status"]
         if status == "online":
             liveURL = json_response["urls"][counter]["url"]
             urlsIndex.append(liveURL)
         counter = counter + 1
-    for i in range(20):
+    for _ in range(20):
         randomSample = random.choice(urlsIndex)
         randomUrlsIndex.append(randomSample)
     myFile = open("Malware_Results.txt", mode="a+")
@@ -189,15 +201,14 @@ def known_dist():
             downloader = requests.get(x, timeout=5)
             if downloader.status_code == 200:
                 current_time = time.strftime("%X")
-                result = "Timestamp:" + str(current_time) + " URL:" + str(x) + " test SUCCESFULL\n"
-                myFile.write(result)
+                result = f"Timestamp:{str(current_time)} URL:{str(x)}" + " test SUCCESFULL\n"
             else:
                 current_time = time.strftime("%X")
-                result = "Timestamp:" + str(current_time) + " URL:" + str(x) + " test FAILED\n"
-                myFile.write(result)
+                result = f"Timestamp:{str(current_time)} URL:{str(x)}" + " test FAILED\n"
+            myFile.write(result)
         except Exception as e:
             current_time = time.strftime("%X")
-            result = "Timestamp:" + str(current_time) + " URL:" + str(x) + " test FAILED\n"
+            result = f"Timestamp:{str(current_time)} URL:{str(x)}" + " test FAILED\n"
             myFile.write(result)
             continue
     aprint("random")
@@ -217,7 +228,7 @@ def known_crypto():
     for file in saved_files:
         with open(file, 'r') as f:
             lines = f.readlines()
-            for i in range(15):
+            for _ in range(15):
                 randomIP = random.choice(lines)
                 sampleMining.append(randomIP)
     sampleMining = [x.strip() for x in sampleMining]
@@ -227,15 +238,14 @@ def known_crypto():
             downloader = requests.get(x, timeout=5)
             if downloader.status_code == 200:
                 current_time = time.strftime("%X")
-                result = "Timestamp:" + str(current_time) + " URL:" + str(x) + " test SUCCESFULL\n"
-                myFile.write(result)
+                result = f"Timestamp:{str(current_time)} URL:{str(x)}" + " test SUCCESFULL\n"
             else:
                 current_time = time.strftime("%X")
-                result = "Timestamp:" + str(current_time) + " URL:" + str(x) + " test FAILED\n"
-                myFile.write(result)
+                result = f"Timestamp:{str(current_time)} URL:{str(x)}" + " test FAILED\n"
+            myFile.write(result)
         except Exception as e:
             current_time = time.strftime("%X")
-            result = "Timestamp:" + str(current_time) + " URL:" + str(x) + " test FAILED\n"
+            result = f"Timestamp:{str(current_time)} URL:{str(x)}" + " test FAILED\n"
             myFile.write(result)
             continue
     for file_name in saved_files:
@@ -246,11 +256,11 @@ def known_crypto():
 def generate_DGA():
     tld_list = ['xyz', 'top', 'zone', 'info', 'biz', 'gq', 'tk', 'club'] #https://trends.netcraft.com/cybercrime/tlds
     sampleDGA = []
-    for i in range(1, 15):
+    for _ in range(1, 15):
         tld = random.choice(tld_list)
         domain_length = random.randint(5, 15)
         domain_name = ''.join(random.choices(string.ascii_lowercase, k=domain_length))
-        dga = domain_name + '.' + tld
+        dga = f'{domain_name}.{tld}'
         sampleDGA.append(dga)
     myFile = open("DGA_Results.txt", mode="a+")
     ports = [80, 443]
@@ -262,19 +272,25 @@ def generate_DGA():
                 result = sock.connect_ex((ip, port))
                 if result == 0:
                     current_time = time.strftime("%X")
-                    resultUP = "Timestamp:" + str(current_time) + " IP:" + str(ip) + " : Port:" + str(
-                        port) + " tested (Actual DGA generated by script, so the domain even may not exist BUT look if your FW or IPS detected the request and tagged it)\n"
+                    resultUP = (
+                        f"Timestamp:{str(current_time)} IP:{str(ip)} : Port:{str(port)}"
+                        + " tested (Actual DGA generated by script, so the domain even may not exist BUT look if your FW or IPS detected the request and tagged it)\n"
+                    )
                     myFile.write(resultUP)
                 else:
                     current_time = time.strftime("%X")
-                    resultDOWN = "Timestamp:" + str(current_time) + " IP:" + str(ip) + " : Port:" + str(
-                        port) + " tested (Actual DGA generated by script, so the domain even may not exist BUT look if your FW or IPS detected the request and tagged it)\n"
+                    resultDOWN = (
+                        f"Timestamp:{str(current_time)} IP:{str(ip)} : Port:{str(port)}"
+                        + " tested (Actual DGA generated by script, so the domain even may not exist BUT look if your FW or IPS detected the request and tagged it)\n"
+                    )
                     myFile.write(resultDOWN)
                 sock.close()
             except Exception as e:
                 current_time = time.strftime("%X")
-                resultDOWN = "Timestamp:" + str(current_time) + " IP:" + str(ip) + " : Port:" + str(
-                    port) + " tested (Actual DGA generated by script, so the domain even may not exist BUT look if your FW or IPS detected the request and tagged it)\n"
+                resultDOWN = (
+                    f"Timestamp:{str(current_time)} IP:{str(ip)} : Port:{str(port)}"
+                    + " tested (Actual DGA generated by script, so the domain even may not exist BUT look if your FW or IPS detected the request and tagged it)\n"
+                )
                 myFile.write(resultDOWN)
                 continue
     aprint("random")
@@ -300,20 +316,17 @@ def test_RAT():
         'instance-ra153n-relay.screenconnect.com',
         'gotoassist.com'
     ]
-    if platform.system() == 'Windows':
-        ping_args = '-n'
-    else:
-        ping_args = '-c'
+    ping_args = '-n' if platform.system() == 'Windows' else '-c'
     myFile = open("RAT_Results.txt", mode="a+")
     for url in tqdm(urls,desc="Testing URLs from known Remote Desktop tools, results saved to RAT_Results.txt"):
         try:
             subprocess.check_output(['ping', ping_args, '1', url])
             current_time = time.strftime("%X")
-            result = "Timestamp:" + str(current_time) + " URL:" + str(url) + " test DONE\n"
+            result = f"Timestamp:{str(current_time)} URL:{str(url)}" + " test DONE\n"
             myFile.write(result)
         except subprocess.CalledProcessError:
             current_time = time.strftime("%X")
-            result = "Timestamp:" + str(current_time) + " URL:" + str(url) + " test DONE\n"
+            result = f"Timestamp:{str(current_time)} URL:{str(url)}" + " test DONE\n"
             myFile.write(result)
     aprint("random")
     clear_screen()
@@ -332,52 +345,85 @@ def known_badAgents():
     for file in saved_files:
         with open(file, 'r') as f:
             lines = f.readlines()
-            for i in tqdm(range(15),desc='Downloading Samples'):
+            for _ in tqdm(range(15),desc='Downloading Samples'):
                 randomAgent = random.choice(lines)
                 sampleAgent.append(randomAgent)
     sampleAgent = [x.strip() for x in sampleAgent]
     myFile = open("Agent_Results.txt", mode="a+")
+    url = 'https://google.com'
     for agent in tqdm(sampleAgent,desc='Sending HTTPS request to Google with known bad User-Agent'):
-        url = 'https://google.com'
         headers = {'User-Agent': agent}
         response = requests.get(url, headers=headers)
-        if response.status_code == 200:
-            current_time = time.strftime("%X")
-            result = "Timestamp:" + str(current_time) + " URL:" + str(agent) + " test DONE\n"
-            myFile.write(result)
-        else:
-            current_time = time.strftime("%X")
-            result = "Timestamp:" + str(current_time) + " URL:" + str(agent) + " test DONE\n"
-            myFile.write(result)
+        current_time = time.strftime("%X")
+        result = f"Timestamp:{str(current_time)} URL:{str(agent)}" + " test DONE\n"
+        myFile.write(result)
     for file_name in saved_files:
         os.remove(file_name)
     aprint("random")
     clear_screen()
+def dns_HTTPS():
+    print("Unmanaged DNS using encryption protocols like TLS/HTTPS/QUIC is a risk given the fact that you lose visibility over trafic (requests), if you use a managed DoH/DoT (EX: Umbrella, Zscaler,etc), you should allowlist only those services and block the category of DoH/DoT\n")
+
+    domains = ['google.com','example.com','bing.com','cloudflare.com','apple.com']
+    myFile = open("DoH_Results.txt", mode="a+")
+    x=0
+    headers = {
+        'accept': 'application/dns-json',
+    }
+    for _ in tqdm(domains,desc="Generating requests"):
+        dns_params = {
+            'name': domains[x],
+            'type': 'A'
+        }
+        y=0
+        doh_servers = [
+            'https://dns.google/resolve',
+            'https://cloudflare-dns.com/dns-query',
+        ]
+        for _ in doh_servers:
+            try:
+                response = requests.get(doh_servers[y], params=dns_params,headers=headers)
+                dns_response = response.content
+                current_time = time.strftime("%X")
+                if doh_servers[y] == "https://dns.google/resolve":
+                    result = f'Timestamp:{str(current_time)} Google response for {domains[x]} is : {dns_response}\n'
+                    myFile.write(result)
+                elif doh_servers[y] == "https://cloudflare-dns.com/dns-query":
+                    result = f'Timestamp:{str(current_time)} Cloudflare response for {domains[x]} is : {dns_response}\n'
+                    myFile.write(result)
+                y=y+1
+            except Exception as e:
+                result = f'Timestamp:{str(current_time)} Error response for {domains[x]}\n'
+                myFile.write(result)
+        x=x+1
+    aprint("random")
+    clear_screen()
 #Main
-Art=text2art("Somnium: NetSec testing script","rand")
+Art=text2art("Somnium","rand")
 print(Art)
 loopEnd = False
-while(loopEnd == False):
-  choice = input("#1 Test connection with known bad IPs.\n#2 Test connection with known Phishing URLs.\n#3 Test connection to TOR Exits Nodes.\n#4 Test connection to live Malware distribution Urls\n#5 Test connection to known Cryptomining domains.\n#6 Test connection to Domain-Generated-Algorithm Domains.\n#7 Test connection to Remote Desktop Management.(Anydesk,etc.)\n#8 Test connection using known bad user agents.\n#0 Exit.\nChoice:")
-  if int(choice) == 1:
-      known_IP()
-  elif int(choice) == 2:
-      known_phish()
-  elif int(choice) == 3:
-      known_TOR()
-  elif int(choice) == 4:
-      known_dist()
-  elif int(choice) == 5:
-      known_crypto()
-  elif int(choice) == 6:
-      generate_DGA()
-  elif int(choice) == 7:
-      test_RAT()
-  elif int(choice) == 8:
-      known_badAgents()
-  else:
-      print("-----")
-      clear_screen()
-      exit()
-
-
+while not loopEnd:
+    choice = input("#1 Test connection with known bad IPs.\n#2 Test connection with known Phishing URLs.\n#3 Test connection to TOR Exits Nodes.\n#4 Test connection to live Malware distribution Urls\n#5 Test connection to known Cryptomining domains.\n#6 Test connection to Domain-Generated-Algorithm Domains.\n#7 Test connection to Remote Desktop Management.(Anydesk,etc.)\n#8 Test connection using known bad user agents.\n#9 Generate DNS queries using DoH\n#0 Exit.\nChoice:")
+    if int(choice) == 1:
+        known_IP()
+    elif int(choice) == 2:
+        known_phish()
+    elif int(choice) == 3:
+        known_TOR()
+    elif int(choice) == 4:
+        known_dist()
+    elif int(choice) == 5:
+        known_crypto()
+    elif int(choice) == 6:
+        generate_DGA()
+    elif int(choice) == 7:
+        test_RAT()
+    elif int(choice) == 8:
+        known_badAgents()
+    elif int(choice) == 9:
+        dns_HTTPS()
+    ##
+    else:
+        print("-----")
+        clear_screen()
+        exit()
