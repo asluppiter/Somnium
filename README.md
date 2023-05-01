@@ -16,6 +16,7 @@ python3 main.py
 #6 Test connection to Domain-Generated-Algorithm Domains.
 #7 Test connection to Remote Desktop Management.(Anydesk,etc.)
 #8 Test connection using known bad user agents.
+#9 Generate DNS queries using DoH
 #0 Exit.
 Choice:
 ```
